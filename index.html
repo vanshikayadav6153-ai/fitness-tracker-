@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FitTrack — Fitness Tracker</title>
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#4f46e5" />
+<link rel="icon" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="FitTrack" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-icon">💪</span>
+        <span class="brand-name">FitTrack</span>
+      </div>
+      <nav class="tabs" role="tablist">
+        <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+        <button class="tab-btn" data-tab="log">Log Activity</button>
+        <button class="tab-btn" data-tab="history">History</button>
+        <button class="tab-btn" data-tab="goals">Goals</button>
+      </nav>
+      <div class="sync-status" id="syncStatus" style="display:none;">
+        <span id="syncStatusText"></span>
+        <button id="signOutBtn" class="btn-quote">Sign Out</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="tab-panel active">
+        <h1 class="page-title">Today's Summary</h1>
+        <p class="page-date" id="todayDate"></p>
+
+        <div class="quote-card">
+          <div class="quote-icon">❝</div>
+          <div class="quote-body">
+            <p class="quote-text" id="quoteText">Loading quote...</p>
+            <p class="quote-author" id="quoteAuthor"></p>
+          </div>
+          <button id="newQuoteBtn" class="btn-quote" type="button">New Quote</button>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-icon">👣</div>
+            <div class="stat-info">
+              <div class="stat-value" id="stepsToday">0</div>
+              <div class="stat-label">Steps</div>
+              <div class="progress-bar"><div class="progress-fill" id="stepsProgress"></div></div>
+              <div class="stat-goal" id="stepsGoalLabel"></div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-info">
+              <div class="stat-value" id="caloriesToday">0</div>
+              <div class="stat-label">Calories Burned</div>
+              <div class="progress-bar"><div class="progress-fill" id="caloriesProgress"></div></div>
+              <div class="stat-goal" id="caloriesGoalLabel"></div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-info">
+              <div class="stat-value" id="minutesToday">0</div>
+              <div class="stat-label">Workout Minutes</div>
+              <div class="progress-bar"><div class="progress-fill" id="minutesProgress"></div></div>
+              <div class="stat-goal" id="minutesGoalLabel"></div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-info">
+              <div class="stat-value" id="workoutsToday">0</div>
+              <div class="stat-label">Workouts Logged</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-grid">
+          <div class="chart-card">
+            <h2>Weekly Calories Burned</h2>
+            <canvas id="weeklyCaloriesChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <h2>Weekly Steps</h2>
+            <canvas id="weeklyStepsChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card full">
+          <h2>Activity Breakdown (Last 7 Days)</h2>
+          <canvas id="activityBreakdownChart"></canvas>
+        </div>
+      </section>
+
+      <!-- LOG ACTIVITY -->
+      <section id="log" class="tab-panel">
+        <h1 class="page-title">Log Activity</h1>
+        <form id="logForm" class="log-form">
+          <div class="form-row">
+            <label for="entryDate">Date</label>
+            <input type="date" id="entryDate" required />
+          </div>
+
+          <div class="form-row">
+            <label for="activityType">Activity Type</label>
+            <select id="activityType" required>
+              <option value="">Select activity</option>
+              <option value="Walking">Walking</option>
+              <option value="Running">Running</option>
+              <option value="Cycling">Cycling</option>
+              <option value="Yoga">Yoga</option>
+              <option value="Strength Training">Strength Training</option>
+              <option value="Swimming">Swimming</option>
+              <option value="HIIT">HIIT</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-row two-col">
+            <div>
+              <label for="entrySteps">Steps</label>
+              <input type="number" id="entrySteps" min="0" placeholder="e.g. 3000" />
+            </div>
+            <div>
+              <label for="entryDuration">Duration (min)</label>
+              <input type="number" id="entryDuration" min="0" placeholder="e.g. 30" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="entryCalories">Calories Burned</label>
+            <input type="number" id="entryCalories" min="0" placeholder="e.g. 250" />
+          </div>
+
+          <div class="form-row">
+            <label for="entryNotes">Notes (optional)</label>
+            <textarea id="entryNotes" rows="2" placeholder="Anything to remember..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary">Save Entry</button>
+          <p id="formMessage" class="form-message"></p>
+        </form>
+      </section>
+
+      <!-- HISTORY -->
+      <section id="history" class="tab-panel">
+        <h1 class="page-title">History</h1>
+        <div class="history-controls">
+          <input type="text" id="historySearch" placeholder="Search by activity or note..." />
+          <button id="clearAllBtn" class="btn-danger-outline">Clear All Data</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </section>
+
+      <!-- GOALS -->
+      <section id="goals" class="tab-panel">
+        <h1 class="page-title">Daily Goals</h1>
+        <form id="goalsForm" class="log-form">
+          <div class="form-row">
+            <label for="goalSteps">Steps Goal</label>
+            <input type="number" id="goalSteps" min="1" required />
+          </div>
+          <div class="form-row">
+            <label for="goalCalories">Calories Goal</label>
+            <input type="number" id="goalCalories" min="1" required />
+          </div>
+          <div class="form-row">
+            <label for="goalMinutes">Workout Minutes Goal</label>
+            <input type="number" id="goalMinutes" min="1" required />
+          </div>
+          <button type="submit" class="btn-primary">Save Goals</button>
+          <p id="goalsMessage" class="form-message"></p>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <!-- Shown when Firebase is configured and no user is signed in yet -->
+  <div id="authOverlay" class="auth-overlay" style="display:none;">
+    <div class="auth-card">
+      <h2>Welcome to FitTrack</h2>
+      <p class="auth-sub">Sign in to sync your data across devices, or continue on this device only.</p>
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab-btn active" data-authtab="signin">Sign In</button>
+        <button type="button" class="auth-tab-btn" data-authtab="signup">Sign Up</button>
+      </div>
+      <form id="authForm">
+        <div class="form-row">
+          <label for="authEmail">Email</label>
+          <input type="email" id="authEmail" required />
+        </div>
+        <div class="form-row">
+          <label for="authPassword">Password</label>
+          <input type="password" id="authPassword" minlength="6" required />
+        </div>
+        <button type="submit" class="btn-primary" id="authSubmitBtn">Sign In</button>
+        <p id="authMessage" class="form-message"></p>
+      </form>
+      <button type="button" id="continueLocalBtn" class="btn-link">Continue without an account</button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
