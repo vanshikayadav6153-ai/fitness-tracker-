@@ -429,6 +429,74 @@ function initAuth() {
     }
   });
 
+  document.querySelectorAll(".auth-method-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".auth-method-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      const method = btn.dataset.authmethod;
+      document.getElementById("emailAuthSection").style.display = method === "email" ? "block" : "none";
+      document.getElementById("phoneAuthSection").style.display = method === "phone" ? "block" : "none";
+    });
+  });
+
+  let confirmationResult = null;
+
+  function getRecaptchaVerifier() {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier("recaptchaContainer", {
+        size: "invisible",
+      });
+    }
+    return window.recaptchaVerifier;
+  }
+
+  document.getElementById("phoneNumberForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const phone = document.getElementById("authPhone").value.trim();
+    const msg = document.getElementById("phoneAuthMessage");
+    msg.textContent = "";
+    msg.className = "form-message";
+    try {
+      const verifier = getRecaptchaVerifier();
+      confirmationResult = await fbAuth.signInWithPhoneNumber(phone, verifier);
+      document.getElementById("phoneNumberForm").style.display = "none";
+      document.getElementById("phoneOtpForm").style.display = "block";
+      msg.textContent = "OTP sent. Enter the code below.";
+    } catch (err) {
+      msg.textContent = err.message;
+      msg.className = "form-message error";
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.clear();
+        window.recaptchaVerifier = null;
+      }
+    }
+  });
+
+  document.getElementById("phoneOtpForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const code = document.getElementById("authOtp").value.trim();
+    const msg = document.getElementById("phoneAuthMessage");
+    msg.textContent = "";
+    msg.className = "form-message";
+    try {
+      await confirmationResult.confirm(code);
+    } catch (err) {
+      msg.textContent = err.message;
+      msg.className = "form-message error";
+    }
+  });
+
+  document.getElementById("changeNumberBtn").addEventListener("click", () => {
+    document.getElementById("phoneOtpForm").style.display = "none";
+    document.getElementById("phoneNumberForm").style.display = "block";
+    document.getElementById("authOtp").value = "";
+    document.getElementById("phoneAuthMessage").textContent = "";
+    if (window.recaptchaVerifier) {
+      window.recaptchaVerifier.clear();
+      window.recaptchaVerifier = null;
+    }
+  });
+
   document.getElementById("continueLocalBtn").addEventListener("click", () => {
     sessionStorage.setItem("fittrack_local_mode", "1");
     overlay.style.display = "none";
@@ -445,12 +513,17 @@ function initAuth() {
     if (user) {
       overlay.style.display = "none";
       syncStatus.style.display = "flex";
-      document.getElementById("syncStatusText").textContent = `Synced as ${user.email}`;
+      document.getElementById("syncStatusText").textContent = `Synced as ${user.email || user.phoneNumber}`;
       attachFirestoreListeners(user.uid);
     } else {
       syncStatus.style.display = "none";
       detachFirestoreListeners();
       overlay.style.display = sessionStorage.getItem("fittrack_local_mode") ? "none" : "flex";
+      document.getElementById("phoneOtpForm").style.display = "none";
+      document.getElementById("phoneNumberForm").style.display = "block";
+      document.getElementById("authPhone").value = "";
+      document.getElementById("authOtp").value = "";
+      document.getElementById("phoneAuthMessage").textContent = "";
     }
   });
 }

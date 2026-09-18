@@ -192,22 +192,53 @@
     <div class="auth-card">
       <h2>Welcome to FitTrack</h2>
       <p class="auth-sub">Sign in to sync your data across devices, or continue on this device only.</p>
-      <div class="auth-tabs">
-        <button type="button" class="auth-tab-btn active" data-authtab="signin">Sign In</button>
-        <button type="button" class="auth-tab-btn" data-authtab="signup">Sign Up</button>
+
+      <div class="auth-method-tabs">
+        <button type="button" class="auth-method-btn active" data-authmethod="email">Email</button>
+        <button type="button" class="auth-method-btn" data-authmethod="phone">Phone</button>
       </div>
-      <form id="authForm">
-        <div class="form-row">
-          <label for="authEmail">Email</label>
-          <input type="email" id="authEmail" required />
+
+      <!-- EMAIL LOGIN -->
+      <div id="emailAuthSection" class="auth-method-section">
+        <div class="auth-tabs">
+          <button type="button" class="auth-tab-btn active" data-authtab="signin">Sign In</button>
+          <button type="button" class="auth-tab-btn" data-authtab="signup">Sign Up</button>
         </div>
-        <div class="form-row">
-          <label for="authPassword">Password</label>
-          <input type="password" id="authPassword" minlength="6" required />
-        </div>
-        <button type="submit" class="btn-primary" id="authSubmitBtn">Sign In</button>
-        <p id="authMessage" class="form-message"></p>
-      </form>
+        <form id="authForm">
+          <div class="form-row">
+            <label for="authEmail">Email</label>
+            <input type="email" id="authEmail" required />
+          </div>
+          <div class="form-row">
+            <label for="authPassword">Password</label>
+            <input type="password" id="authPassword" minlength="6" required />
+          </div>
+          <button type="submit" class="btn-primary" id="authSubmitBtn">Sign In</button>
+          <p id="authMessage" class="form-message"></p>
+        </form>
+      </div>
+
+      <!-- PHONE LOGIN -->
+      <div id="phoneAuthSection" class="auth-method-section" style="display:none;">
+        <form id="phoneNumberForm">
+          <div class="form-row">
+            <label for="authPhone">Mobile Number</label>
+            <input type="tel" id="authPhone" placeholder="+91 98765 43210" required />
+          </div>
+          <button type="submit" class="btn-primary" id="sendOtpBtn">Send OTP</button>
+        </form>
+        <form id="phoneOtpForm" style="display:none;">
+          <div class="form-row">
+            <label for="authOtp">Enter OTP</label>
+            <input type="text" id="authOtp" inputmode="numeric" placeholder="6-digit code" required />
+          </div>
+          <button type="submit" class="btn-primary" id="verifyOtpBtn">Verify &amp; Sign In</button>
+          <button type="button" id="changeNumberBtn" class="btn-link">Use a different number</button>
+        </form>
+        <p id="phoneAuthMessage" class="form-message"></p>
+        <div id="recaptchaContainer"></div>
+      </div>
+
       <button type="button" id="continueLocalBtn" class="btn-link">Continue without an account</button>
     </div>
   </div>
