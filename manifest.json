@@ -1,6 +1,6 @@
 {
-  "name": "FitTrack — Fitness Tracker",
-  "short_name": "FitTrack",
+  "name": "CodeAlpha Fitness Tracker App",
+  "short_name": "CodeAlpha Fitness",
   "description": "Track daily steps, workouts, and calories with a simple dashboard.",
   "start_url": "./index.html",
   "scope": "./",
